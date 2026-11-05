@@ -1,3 +1,5 @@
+require('dotenv').config();
+
 // server.js
 const express = require('express');
 const path = require('path');
@@ -14,7 +16,7 @@ app.use(express.json());
 const webRoutes = require('./src/routes/web'); // ? เชื่อมต่อไปยัง Route
 app.use('/', webRoutes); // ?
 
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
     console.log(`Server running at http://localhost:${PORT}`);
 });
