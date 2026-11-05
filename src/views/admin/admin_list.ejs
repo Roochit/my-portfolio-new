@@ -1,0 +1,90 @@
+<!-- src/views/admin/admin_list.ejs -->
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>จัดการผู้ดูแลระบบ (Admins) | Admin</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-50 text-slate-800 min-h-screen">
+
+    <!-- Admin Navbar -->
+    <header class="bg-white border-b border-slate-200">
+        <div class="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
+            <div class="flex items-center gap-6">
+                <div class="flex items-center gap-2">
+                    <span class="text-xl">⚙️</span>
+                    <span class="font-bold text-slate-900">Admin Panel</span>
+                </div>
+                <nav class="hidden sm:flex items-center gap-1 text-sm">
+                    <a href="/admin/products" class="px-3 py-1.5 rounded-lg text-slate-600 hover:text-indigo-600 hover:bg-slate-50 font-medium">📦 จัดการผลงาน (Products)</a>
+                    <a href="/admin/admins" class="px-3 py-1.5 rounded-lg bg-indigo-50 text-indigo-700 font-semibold">👥 จัดการแอดมิน (Admins)</a>
+                </nav>
+            </div>
+            <div class="flex items-center gap-3 text-xs sm:text-sm">
+                <a href="/" target="_blank" class="text-slate-600 hover:text-indigo-600">ดูหน้าเว็บ &rarr;</a>
+                <a href="/login" class="px-3 py-1.5 rounded-lg border border-slate-200 text-slate-600 hover:bg-slate-100">ออกจากระบบ</a>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-6xl mx-auto px-4 py-8">
+        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
+            <div>
+                <h1 class="text-2xl font-bold text-slate-900">ผู้ดูแลระบบทั้งหมด</h1>
+                <p class="text-xs text-slate-500">บัญชีแอดมินที่มีสิทธิ์จัดการระบบ (<%= admins.length %> บัญชี)</p>
+            </div>
+            <a href="/admin/admins/create" class="px-4 py-2 rounded-xl bg-indigo-600 text-white text-sm font-medium hover:bg-indigo-700 transition flex items-center gap-1.5">
+                <span>+</span> เพิ่มผู้ดูแลใหม่
+            </a>
+        </div>
+
+        <!-- Table -->
+        <div class="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm">
+            <div class="overflow-x-auto">
+                <table class="w-full text-left text-sm">
+                    <thead class="bg-slate-50 border-b border-slate-200 text-slate-600 text-xs uppercase font-semibold">
+                        <tr>
+                            <th class="p-4 w-20">ID</th>
+                            <th class="p-4">ชื่อผู้ใช้ (Username)</th>
+                            <th class="p-4 hidden sm:table-cell">วันที่สร้าง</th>
+                            <th class="p-4 w-32 text-right">จัดการ</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-100">
+                        <% if (admins.length === 0) { %>
+                            <tr>
+                                <td colspan="4" class="p-8 text-center text-slate-400">ยังไม่มีข้อมูลผู้ดูแล</td>
+                            </tr>
+                        <% } %>
+                        <% admins.forEach(admin => { %>
+                            <tr class="hover:bg-slate-50/50">
+                                <td class="p-4 text-xs text-slate-400 font-mono"><%= admin.id %></td>
+                                <td class="p-4 font-semibold text-slate-900 flex items-center gap-2">
+                                    <span class="w-7 h-7 rounded-full bg-slate-100 text-slate-600 flex items-center justify-center text-xs font-bold">
+                                        <%= admin.username.charAt(0).toUpperCase() %>
+                                    </span>
+                                    <span><%= admin.username %></span>
+                                </td>
+                                <td class="p-4 text-xs text-slate-500 hidden sm:table-cell">
+                                    <%= admin.created_at ? new Date(admin.created_at).toLocaleDateString('th-TH') : '-' %>
+                                </td>
+                                <td class="p-4 text-right">
+                                    <div class="flex items-center justify-end gap-2 text-xs">
+                                        <a href="/admin/admins/<%= admin.id %>/edit" class="px-2.5 py-1 rounded bg-slate-100 text-indigo-600 hover:bg-indigo-50 font-medium">แก้ไข</a>
+                                        <form action="/admin/admins/<%= admin.id %>/delete" method="POST" onsubmit="return confirm('ยืนยันลบผู้ดูแลนี้?');" class="inline">
+                                            <button type="submit" class="px-2.5 py-1 rounded bg-slate-100 text-red-600 hover:bg-red-50 font-medium">ลบ</button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                        <% }) %>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+
+</body>
+</html>

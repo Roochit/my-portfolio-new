@@ -1,0 +1,58 @@
+# Project Context: Chit Lite MVC
+
+## 1. Overview
+Node.js + Express MVC Starter Template:
+- **Architecture**: MVC (Model - View - Controller)
+- **Runtime**: Node.js (CommonJS `require` / `module.exports`)
+- **Web Framework**: Express 4
+- **Template Engine**: EJS
+- **Database**: MySQL (`mysql2/promise`)
+- **Styling**: Tailwind CSS (Standard utility classes, no heavy customizations)
+
+---
+
+## 2. Directory Structure
+```
+chit-lite-mvc/
+├── server.js              # Application entry point, Express config & routing
+├── src/
+│   ├── config/
+│   │   └── db.js          # MySQL connection pool (mysql2/promise)
+│   ├── routes/
+│   │   └── web.js         # URL route definitions mapped to Controllers
+│   ├── controllers/
+│   │   └── HomeController.js # Request handling, logic & view rendering
+│   ├── models/
+│   │   └── userModel.js   # SQL queries & database operations
+│   └── views/
+│       └── index.ejs      # EJS templates styled with Tailwind CSS
+└── public/                # Static assets (images, css, client js)
+```
+
+---
+
+## 3. Data Flow & Connection Pattern
+Data flows strictly through the MVC pattern:
+1. **Request**: Browser hits URL defined in `server.js` & `src/routes/web.js`.
+2. **Route ➔ Controller**: `src/routes/web.js` calls the respective Controller function.
+3. **Controller ➔ Model**: Controller queries the Model for data (async/await).
+4. **Model ➔ Database**: Model runs SQL via `src/config/db.js` (`pool.query`).
+5. **Controller ➔ View**: Controller passes data to `res.render('<view>', { ... })`.
+6. **View ➔ Response**: EJS renders HTML with Tailwind CSS back to the client.
+
+> **Convention Note (`?`)**:
+> In this boilerplate, unconfigured connection points and placeholders are denoted by `'?'` or `// ?` (e.g., `database: '?'`, `SELECT * FROM ?`).
+
+---
+
+## 4. Coding Guidelines for AI
+- **Separation of Concerns**:
+  - Keep SQL queries exclusively in `src/models/`.
+  - Keep route definitions in `src/routes/`.
+  - Keep business logic and view orchestration in `src/controllers/`.
+  - Keep templates in `src/views/`.
+- **Code Style**:
+  - Keep code concise, clean, and minimal. Avoid bloated comments or over-engineering.
+  - Use async/await for asynchronous database and controller methods.
+  - Use standard Tailwind CSS classes directly for UI design.
+

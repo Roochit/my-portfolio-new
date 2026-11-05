@@ -1,0 +1,111 @@
+<!-- src/views/product-back/product_create.ejs -->
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>จัดการผลงาน (Products) | Admin</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-50 text-slate-800 min-h-screen">
+
+    <!-- Admin Navbar -->
+    <header class="bg-white border-b border-slate-200">
+        <div class="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
+            <div class="flex items-center gap-6">
+                <div class="flex items-center gap-2">
+                    <span class="text-xl">⚙️</span>
+                    <span class="font-bold text-slate-900">Admin Panel</span>
+                </div>
+                <nav class="hidden sm:flex items-center gap-1 text-sm">
+                    <a href="/admin/products" class="px-3 py-1.5 rounded-lg bg-indigo-50 text-indigo-700 font-semibold">📦 จัดการผลงาน (Products)</a>
+                    <a href="/admin/admins" class="px-3 py-1.5 rounded-lg text-slate-600 hover:text-indigo-600 hover:bg-slate-50 font-medium">👥 จัดการแอดมิน (Admins)</a>
+                </nav>
+            </div>
+            <div class="flex items-center gap-3 text-xs sm:text-sm">
+                <a href="/" target="_blank" class="text-slate-600 hover:text-indigo-600">ดูหน้าเว็บ &rarr;</a>
+                <a href="/login" class="px-3 py-1.5 rounded-lg border border-slate-200 text-slate-600 hover:bg-slate-100">ออกจากระบบ</a>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-6xl mx-auto px-4 py-8">
+        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
+            <div>
+                <h1 class="text-2xl font-bold text-slate-900">รายการผลงานทั้งหมด</h1>
+                <p class="text-xs text-slate-500">มีทั้งหมด <%= projects.length %> รายการ</p>
+            </div>
+            <a href="/admin/products/create" class="px-4 py-2 rounded-xl bg-indigo-600 text-white text-sm font-medium hover:bg-indigo-700 transition flex items-center gap-1.5">
+                <span>+</span> เพิ่มผลงานใหม่
+            </a>
+        </div>
+
+        <!-- Table -->
+        <div class="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm">
+            <div class="overflow-x-auto">
+                <table class="w-full text-left text-sm">
+                    <thead class="bg-slate-50 border-b border-slate-200 text-slate-600 text-xs uppercase font-semibold">
+                        <tr>
+                            <th class="p-4 w-16">รูปปก</th>
+                            <th class="p-4">ชื่อผลงาน</th>
+                            <th class="p-4 w-28">หมวดหมู่</th>
+                            <th class="p-4 hidden md:table-cell">Tags</th>
+                            <th class="p-4 w-32 text-right">จัดการ</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-100">
+                        <% if (projects.length === 0) { %>
+                            <tr>
+                                <td colspan="5" class="p-8 text-center text-slate-400">ยังไม่มีข้อมูลผลงาน</td>
+                            </tr>
+                        <% } %>
+                        <% projects.forEach(project => { 
+                            const cover = project.coverImage || project.image || '';
+                            const imgSrc = cover.startsWith('http') ? cover : (cover ? '/' + cover : '');
+                        %>
+                            <tr class="hover:bg-slate-50/50">
+                                <td class="p-4">
+                                    <div class="w-16 h-10 rounded-lg bg-slate-100 overflow-hidden border border-slate-200 flex items-center justify-center">
+                                        <% if (imgSrc) { %>
+                                            <img src="<%= imgSrc %>" alt="" class="w-full h-full object-cover" onerror="this.onerror=null; this.parentElement.innerHTML='<span class=\'text-xs\'>🎨</span>';">
+                                        <% } else { %>
+                                            <span class="text-xs">🎨</span>
+                                        <% } %>
+                                    </div>
+                                </td>
+                                <td class="p-4">
+                                    <div class="font-medium text-slate-900"><%= project.title %></div>
+                                    <div class="text-xs text-slate-400 line-clamp-1"><%= project.description %></div>
+                                </td>
+                                <td class="p-4">
+                                    <span class="px-2.5 py-1 rounded-full text-xs font-semibold bg-slate-100 text-slate-700 uppercase">
+                                        <%= project.category %>
+                                    </span>
+                                </td>
+                                <td class="p-4 hidden md:table-cell">
+                                    <div class="flex flex-wrap gap-1">
+                                        <% if (project.tags) { %>
+                                            <% project.tags.slice(0, 2).forEach(t => { %>
+                                                <span class="px-1.5 py-0.5 rounded bg-slate-100 text-slate-500 text-[10px]"><%= t %></span>
+                                            <% }) %>
+                                        <% } %>
+                                    </div>
+                                </td>
+                                <td class="p-4 text-right">
+                                    <div class="flex items-center justify-end gap-2 text-xs">
+                                        <a href="/admin/products/<%= project.id %>/edit" class="px-2.5 py-1 rounded bg-slate-100 text-indigo-600 hover:bg-indigo-50 font-medium">แก้ไข</a>
+                                        <form action="/admin/products/<%= project.id %>/delete" method="POST" onsubmit="return confirm('ยืนยันลบรายการนี้?');" class="inline">
+                                            <button type="submit" class="px-2.5 py-1 rounded bg-slate-100 text-red-600 hover:bg-red-50 font-medium">ลบ</button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                        <% }) %>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+
+</body>
+</html>

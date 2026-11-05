@@ -1,0 +1,120 @@
+<!-- src/views/index.ejs -->
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %></title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col">
+
+    <!-- Navbar -->
+    <header class="bg-white border-b border-slate-200 sticky top-0 z-50">
+        <div class="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
+            <a href="/" class="text-xl font-bold text-slate-900 flex items-center gap-2">
+                <span>⚡</span> Roochit.dev
+            </a>
+            <nav class="flex items-center gap-4 text-sm font-medium">
+                <a href="/" class="text-slate-600 hover:text-indigo-600">ผลงานทั้งหมด</a>
+                <a href="/login" class="px-3 py-1.5 rounded-lg bg-slate-900 text-white hover:bg-slate-800 text-xs">เข้าสู่ระบบ Admin</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="max-w-6xl mx-auto px-4 py-12 text-center">
+        <span class="inline-block px-3 py-1 text-xs font-semibold text-indigo-700 bg-indigo-50 rounded-full mb-3">Portfolio & Showcase</span>
+        <h1 class="text-3xl sm:text-4xl font-extrabold text-slate-900 mb-3">Roochit Khamcharoen</h1>
+        <p class="text-slate-600 max-w-xl mx-auto text-sm sm:text-base mb-6">
+            รวมผลงาน 3D Animation, Game Development และ Web Application
+        </p>
+
+        <!-- Categories Filter -->
+        <div class="flex flex-wrap items-center justify-center gap-2">
+            <% const cats = [
+                { id: 'all', label: 'ทั้งหมด' },
+                { id: 'animation', label: '🎬 Animation' },
+                { id: 'game', label: '🎮 Game' },
+                { id: 'webapp', label: '💻 Web App' }
+            ]; %>
+            <% cats.forEach(cat => { %>
+                <a href="/?category=<%= cat.id %>" 
+                   class="px-4 py-1.5 rounded-full text-xs sm:text-sm font-medium transition <%= currentCategory === cat.id ? 'bg-indigo-600 text-white shadow-sm' : 'bg-white text-slate-600 border border-slate-200 hover:border-slate-300' %>">
+                    <%= cat.label %>
+                </a>
+            <% }) %>
+        </div>
+    </section>
+
+    <!-- Projects Grid -->
+    <main class="max-w-6xl mx-auto px-4 pb-16 flex-1 w-full">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            <% if (projects.length === 0) { %>
+                <div class="col-span-full py-16 text-center text-slate-400">
+                    ไม่พบผลงานในหมวดหมู่นี้
+                </div>
+            <% } %>
+
+            <% projects.forEach(project => { 
+                const cover = project.coverImage || project.image || '';
+                const imgSrc = cover.startsWith('http') ? cover : (cover ? '/' + cover : '');
+            %>
+                <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden flex flex-col hover:shadow-md transition">
+                    <!-- Thumbnail -->
+                    <div class="h-48 bg-slate-900 relative overflow-hidden flex items-center justify-center group">
+                        <% if (imgSrc) { %>
+                            <img src="<%= imgSrc %>" alt="<%= project.title %>" class="w-full h-full object-cover group-hover:scale-105 transition duration-300" onerror="this.onerror=null; this.parentElement.innerHTML='<span class=\'text-3xl text-slate-500\'>🎨</span>';">
+                        <% } else { %>
+                            <span class="text-3xl text-slate-500">🎨</span>
+                        <% } %>
+                        <span class="absolute top-3 left-3 px-2.5 py-0.5 rounded-full text-xs font-semibold uppercase bg-slate-900/80 text-white backdrop-blur-sm">
+                            <%= project.category %>
+                        </span>
+                    </div>
+
+                    <!-- Content -->
+                    <div class="p-5 flex flex-col flex-1">
+                        <h2 class="font-bold text-slate-900 text-base mb-2 line-clamp-2 hover:text-indigo-600">
+                            <a href="/projects/<%= project.id %>"><%= project.title %></a>
+                        </h2>
+                        <p class="text-xs text-slate-500 line-clamp-3 mb-4 flex-1">
+                            <%= project.description || 'ไม่มีคำอธิบาย' %>
+                        </p>
+
+                        <!-- Tags -->
+                        <% if (project.tags && project.tags.length > 0) { %>
+                            <div class="flex flex-wrap gap-1.5 mb-4">
+                                <% project.tags.slice(0, 3).forEach(tag => { %>
+                                    <span class="px-2 py-0.5 rounded-md bg-slate-100 text-slate-600 text-[11px] font-medium"><%= tag %></span>
+                                <% }) %>
+                                <% if (project.tags.length > 3) { %>
+                                    <span class="px-2 py-0.5 rounded-md bg-slate-100 text-slate-400 text-[11px]">+<%= project.tags.length - 3 %></span>
+                                <% } %>
+                            </div>
+                        <% } %>
+
+                        <!-- Action Link -->
+                        <div class="pt-3 border-t border-slate-100 flex items-center justify-between text-xs">
+                            <a href="/projects/<%= project.id %>" class="text-indigo-600 font-semibold hover:underline flex items-center gap-1">
+                                ดูรายละเอียด &rarr;
+                            </a>
+                            <% if (project.videoUrl) { %>
+                                <a href="<%= project.videoUrl %>" target="_blank" rel="noopener" class="text-red-600 hover:text-red-700 font-medium flex items-center gap-1">
+                                    <span>▶</span> วิดีโอ
+                                </a>
+                            <% } %>
+                        </div>
+                    </div>
+                </div>
+            <% }) %>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t border-slate-200 py-6 text-center text-xs text-slate-500">
+        © 2026 Roochit Khamcharoen • Built with Chit Lite MVC & Tailwind CSS
+    </footer>
+
+</body>
+</html>
